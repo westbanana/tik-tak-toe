@@ -1,0 +1,17 @@
+.main{
+  height: 100px;
+  width: 100px;
+  background: #ffffff;
+  box-shadow: inset black 0 0 1px;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover{
+    background: #b6b6b6;
+  }
+  span{
+    color: black;
+    font-size: 30px;
+  }
+}
