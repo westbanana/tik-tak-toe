@@ -4,12 +4,12 @@ import style from './style.module.scss';
 
 import Square from '../Square';
 
-const Board = ({ board, onclick }) => (
+const Board = ({ squares, click }) => (
   <div className={style.main}>
-    {board.map((square, i) => (
+    {squares.map((square, i) => (
       <Square
         value={square}
-        onClick={() => onclick(i)}
+        onClick={() => click(i)}
       />
     ))}
   </div>

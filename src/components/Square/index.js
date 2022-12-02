@@ -2,12 +2,13 @@ import React from 'react';
 
 import style from './style.module.scss';
 
-const Square = ({ value }) => (
+const Square = (props) => (
   <button
     className={style.main}
     type="button"
+    onClick={props.onClick}
   >
-    {value}
+    {props.value}
   </button>
 );
 
