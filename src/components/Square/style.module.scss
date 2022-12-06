@@ -1,16 +1,30 @@
 .main{
   height: 100px;
   width: 100px;
-  background: #ffffff;
+  background: transparent;
   transition: 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   outline: none;
-  border: 1px solid black;
+  border: 1px solid white;
   font-size: 30px;
+  color: white;
+  &:nth-of-type(1),{
+    border-radius: 20px 0 0 0;
+  }
+  &:nth-of-type(3){
+    border-radius: 0 20px 0 0;
+  };
+  &:nth-of-type(7){
+    border-radius: 0 0 0 20px;
+  }
+  &:nth-of-type(9){
+    border-radius: 0 0 20px 0;
+  }
   &:hover{
-    background: #b6b6b6;
+    background: #232323;
+    box-shadow: inset black 0 0 5px;
   }
 }
