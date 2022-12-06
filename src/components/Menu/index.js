@@ -16,7 +16,6 @@ const Menu = () => {
     const playersNamesCopy = [firstPlayer, secondPlayer];
     setPlayerNames(playersNamesCopy);
   };
-  console.log(playersNames);
   return (
     <div className={style.main}>
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
