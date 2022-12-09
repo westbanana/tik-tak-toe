@@ -52,6 +52,7 @@ module.exports = {
         unnamedComponents: 'arrow-function',
       },
     ],
+    'default-param-last': 0,
     'arrow-parens': [
       2,
       'as-needed',

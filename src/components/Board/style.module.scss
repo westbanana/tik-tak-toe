@@ -4,12 +4,15 @@
   width: 300px;
   display: flex;
   flex-wrap: wrap;
+  z-index: 3;
   .refreshIcon{
     height: 70px;
     width: 70px;
     position: absolute;
+    //right: -400px;
+    //top: calc(50% - 35px);
+    top: 20px;
     right: 50px;
-    top: 50px;
     fill: #8c8c8c;
     transition: 0.5s;
     cursor: pointer;

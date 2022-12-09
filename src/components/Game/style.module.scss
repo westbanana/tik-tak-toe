@@ -5,26 +5,57 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 30px;
   background: black;
+  .whoseTurn{
+    color: white;
+  }
+  video{
+    display: none;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    filter: blur(5px) brightness(0.5);
+    z-index: 1;
+    opacity: 0.3;
+    position: absolute;
+  }
   .winnerContainer{
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     color: white;
-    .gif{
-      height: 500px;
-      width: 500px;
-    }
     background: rgba(0, 0, 0, 0.62);
     backdrop-filter: blur(5px);
     position: absolute;
     top: 0;
     height: 100vh;
     width: 100%;
+    z-index: 5;
+    .gif{
+      height: 500px;
+      width: 500px;
+    }
     .winnerDescription{
       font-size: 40px;
       font-weight: 600;
+    }
+    .afterWinButton{
+      text-decoration: none;
+      outline: none;
+      margin: 20px 10px;
+      transition: 0.3s;
+      background: transparent;
+      color: white;
+      border: 1px white solid;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100px;
+      &:hover{
+        box-shadow: rgba(255, 255, 255, 0.68) 0 0 20px;
+      }
     }
   }
 }

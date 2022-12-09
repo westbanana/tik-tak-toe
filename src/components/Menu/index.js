@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import style from './style.module.scss';
 
 import BackgroundVideo from '../../assets/videos/background.mp4';
 
 const Menu = () => {
-  const [gameType, setGameType] = useState();
-  const [playersNames, setPlayerNames] = useState([]);
   const [firstPlayer, setFirstPlayer] = useState();
   const [secondPlayer, setSecondPlayer] = useState();
-  const gameTypeHandleClick = (e) => {
-    setGameType(e.target.value);
-  };
+  const dispatch = useDispatch();
+  const gameType = useSelector(state => state.gameType.gameType);
+
   const changePlayersNames = () => {
     const playersNamesCopy = [firstPlayer, secondPlayer];
-    setPlayerNames(playersNamesCopy);
+    dispatch({ type: 'ADD_PLAYER', payload: [playersNamesCopy] });
   };
+
+  useEffect(() => {
+    dispatch({ type: '', payload: 0 });
+  }, []);
+
   return (
     <div className={style.main}>
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
@@ -26,16 +31,20 @@ const Menu = () => {
           <input
             type="button"
             value="1 vs 1"
-            onClick={e => gameTypeHandleClick(e)}
+            onClick={() => {
+              dispatch({ type: 'SET_GAME_TYPE', payload: 1 });
+            }}
           />
           <input
+            onClick={() => {
+              dispatch({ type: 'SET_GAME_TYPE', payload: 2 });
+            }}
             type="button"
             value="versus bot"
-            onClick={e => gameTypeHandleClick(e)}
           />
         </div>
       )}
-      {gameType === '1 vs 1' ? (
+      {gameType === 1 ? (
         <div className={style.humanType}>
           <div>
             <input
@@ -49,17 +58,35 @@ const Menu = () => {
               placeholder="Игрок 2"
             />
           </div>
-          <div>
+          <div className={style.buttonContainer}>
             <button
               type="button"
+              onClick={() => {
+                dispatch({ type: 'SET_GAME_TYPE', payload: 0 });
+              }}
+              className={style.playButton}
+            >
+              BACK
+            </button>
+            <Link
+              to="/game"
               style={{
                 pointerEvents: `${!firstPlayer || !secondPlayer || firstPlayer === secondPlayer ? 'none' : ''}`,
               }}
-              disabled={firstPlayer === '' || secondPlayer === ''}
-              onClick={changePlayersNames}
             >
-              Play
-            </button>
+              <button
+                type="button"
+                className={style.playButton}
+                onClick={changePlayersNames}
+                to="/game"
+                style={{
+                  pointerEvents: `${!firstPlayer || !secondPlayer || firstPlayer === secondPlayer ? 'none' : ''}`,
+                }}
+                disabled={firstPlayer === '' || secondPlayer === ''}
+              >
+                PLAY
+              </button>
+            </Link>
           </div>
         </div>
       ) : ''}
