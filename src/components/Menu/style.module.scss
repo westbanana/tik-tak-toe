@@ -41,7 +41,20 @@
         }
       }
     }
-    input{
+    .colorInput{
+      outline: none;
+      margin: 0 10px;
+      transition: 0.3s;
+      background: transparent;
+      color: white;
+      border: 1px white solid;
+      border-radius: 5px;
+      cursor: pointer;
+      &:hover{
+        box-shadow: rgba(255, 255, 255, 0.68) 0 0 20px;
+      }
+    }
+    .nameField{
       outline: none;
       margin: 0 10px;
       transition: 0.3s;

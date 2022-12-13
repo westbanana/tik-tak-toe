@@ -6,10 +6,11 @@ import Square from '../Square';
 import { ReactComponent as RefreshIcon } from '../../assets/icons/refresh.svg';
 
 const Board = ({
-  squares, click, setBoard, setXIsNext,
+  squares, click, setBoard, setXIsNext, setTurnCount,
 }) => {
   const refRefreshIcon = useRef(null);
   const handleClick = () => {
+    setTurnCount(0);
     refRefreshIcon.current.classList.add(style.rotate);
     refRefreshIcon.current.classList.add(style.unclickable);
     setTimeout(() => {

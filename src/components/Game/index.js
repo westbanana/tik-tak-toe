@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Lottie from 'lottie-react';
 import { Link } from 'react-router-dom';
@@ -7,15 +7,20 @@ import style from './style.module.scss';
 
 import Board from '../Board';
 import Trophy from '../../assets/gifs/trophy.json';
+import Tie from '../../assets/gifs/tie.json';
 import BackgroundVideo from '../../assets/videos/background.mp4';
 
 const Game = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
+  const [turnCount, setTurnCount] = useState(0);
+  const sticks = Array(20).fill(null);
   const dispatch = useDispatch();
   const players = useSelector(state => state.players.players[0]);
-  // const gameType = useSelector(state => state.gameType.gameType);
-  console.log(players);
+  const gameType = useSelector(state => state.gameType.gameType);
+  const firstPlayer = players[0];
+  const secondPlayer = players[1];
+
   const calculateWinner = (squares) => {
     const lines = [
       [0, 1, 2],
@@ -35,8 +40,11 @@ const Game = () => {
     }
     return null;
   };
+
   const winner = calculateWinner(board);
+
   const handleClick = (index) => {
+    setTurnCount(turnCount + 1);
     const boardCopy = [...board];
     if (winner || boardCopy[index]) return null;
     boardCopy[index] = xIsNext ? 'X' : 'O';
@@ -44,13 +52,87 @@ const Game = () => {
     setXIsNext(!xIsNext);
     return null;
   };
+
+  useEffect(() => {
+    if (gameType === 2 && xIsNext === false) {
+      const boardCopy = [...board];
+      for (let i = 0; i <= 9; i += 1) {
+        const randomNumber = Math.floor(Math.random() * 8);
+        if (!xIsNext && !boardCopy[randomNumber]) {
+          setTimeout(() => {
+            setTurnCount(turnCount + 1);
+            boardCopy[randomNumber] = 'O';
+            setBoard(boardCopy);
+            setXIsNext(true);
+          }, 500);
+          break;
+        }
+      }
+    }
+  }, [xIsNext]);
+
   const restartGame = () => {
     setBoard(Array(9).fill(null));
+    setTurnCount(0);
     setXIsNext(true);
   };
+
+  const resetGameType = () => {
+    dispatch({ type: 'SET_GAME_TYPE', payload: 0 });
+  };
+
   return (
-    <div className={style.main}>
+    <div
+      className={style.main}
+    >
+      <div>
+        {sticks.map((e, i) => (
+          <div
+            className={style.sticks}
+            style={{
+              boxShadow: `${i % 2 === 0 ? firstPlayer.color : secondPlayer.color} 0 0 5px 10px`,
+              filter: `blur(${Math.floor(Math.random() * 30)}px)`,
+              top: `${Math.floor(Math.random() * 100)}%`,
+              background: `${i % 2 === 0 ? firstPlayer.color : secondPlayer.color}`,
+            }}
+          />
+        ))}
+      </div>
       <video src={BackgroundVideo} loop muted autoPlay />
+      {!winner && turnCount === 9 && (
+        <div className={style.winnerContainer}>
+          <Lottie
+            readOnly
+            className={style.gif}
+            animationData={Tie}
+            loop
+          />
+          <span
+            className={style.winnerDescription}
+          >
+            Its tie...
+          </span>
+          <div className={style.buttonContainer}>
+            <Link to="/">
+              <button
+                className={style.afterWinButton}
+                type="button"
+                onClick={resetGameType}
+              >
+                Menu
+              </button>
+            </Link>
+            <button
+              className={style.afterWinButton}
+              type="button"
+              onClick={restartGame}
+            >
+              Restart
+            </button>
+
+          </div>
+        </div>
+      )}
       {winner && (
         <div className={style.winnerContainer}>
           <Lottie
@@ -62,18 +144,16 @@ const Game = () => {
           <span
             className={style.winnerDescription}
           >
-            {`${winner === 'X' ? players[0] : players[1]} won the game`}
+            {`${winner === 'X' ? firstPlayer.name : secondPlayer.name} won the game`}
           </span>
           <div className={style.buttonContainer}>
             <Link to="/">
               <button
                 className={style.afterWinButton}
                 type="button"
-                onClick={() => {
-                  dispatch({ type: 'SET_GAME_TYPE', payload: 0 });
-                }}
+                onClick={resetGameType}
               >
-                На главную
+                Menu
               </button>
             </Link>
             <button
@@ -81,7 +161,7 @@ const Game = () => {
               type="button"
               onClick={restartGame}
             >
-              Переиграть
+              Restart
             </button>
 
           </div>
@@ -90,13 +170,14 @@ const Game = () => {
       <span
         className={style.whoseTurn}
       >
-        {`${xIsNext ? players[0] : players[1]} делает свой ход`}
+        {`${xIsNext ? firstPlayer.name : secondPlayer.name} your turn`}
       </span>
       <Board
         className={style.board}
         setBoard={setBoard}
         setXIsNext={setXIsNext}
         squares={board}
+        setTurnCount={setTurnCount}
         click={handleClick}
       />
     </div>

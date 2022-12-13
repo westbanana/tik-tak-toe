@@ -1,7 +1,7 @@
 .main{
   height: 100px;
   width: 100px;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.92);
   transition: 0.3s;
   display: flex;
   align-items: center;
@@ -11,6 +11,7 @@
   border: 1px solid white;
   font-size: 30px;
   color: white;
+  backdrop-filter: blur(50px);
   &:nth-of-type(1),{
     border-radius: 20px 0 0 0;
   }
