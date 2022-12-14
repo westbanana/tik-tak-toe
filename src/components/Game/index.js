@@ -18,9 +18,18 @@ const Game = () => {
   const dispatch = useDispatch();
   const players = useSelector(state => state.players.players[0]);
   const gameType = useSelector(state => state.gameType.gameType);
-  const firstPlayer = players[0];
-  const secondPlayer = players[1];
-
+  const firstPlayer = () => {
+    if (players) {
+      return players[0];
+    }
+    return localStorage.getItem('players')[0];
+  };
+  const secondPlayer = () => {
+    if (players) {
+      return players[1];
+    }
+    return localStorage.getItem('players')[1];
+  };
   const calculateWinner = (squares) => {
     const lines = [
       [0, 1, 2],
@@ -35,21 +44,52 @@ const Game = () => {
     for (let i = 0; i < lines.length; i += 1) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
+        return [squares[a], [a, b, c]];
       }
     }
     return null;
   };
 
+  useEffect(() => {
+    if (!localStorage.getItem('players')) {
+      localStorage.setItem('players', JSON.stringify(players));
+      localStorage.setItem('gameType', gameType);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem('board') && localStorage.getItem('players') && localStorage.getItem('gameType')) {
+      const boardCopy = JSON.parse(localStorage.getItem('board'));
+      setBoard(boardCopy);
+      dispatch({ type: 'SET_GAME_TYPE', payload: Number(localStorage.getItem('gameType')) });
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('board', JSON.stringify(board));
+  }, [turnCount]);
+
   const winner = calculateWinner(board);
 
   const handleClick = (index) => {
-    setTurnCount(turnCount + 1);
-    const boardCopy = [...board];
-    if (winner || boardCopy[index]) return null;
-    boardCopy[index] = xIsNext ? 'X' : 'O';
-    setBoard(boardCopy);
-    setXIsNext(!xIsNext);
+    if (gameType === 2 && xIsNext) {
+      setTurnCount(turnCount + 1);
+      const boardCopy = [...board];
+      if (winner || boardCopy[index]) return null;
+      boardCopy[index] = 'X';
+      setBoard(boardCopy);
+      setXIsNext(!xIsNext);
+      return null;
+    }
+    if (gameType === 1) {
+      setTurnCount(turnCount + 1);
+      const boardCopy = [...board];
+      if (winner || boardCopy[index]) return null;
+      boardCopy[index] = xIsNext ? 'X' : 'O';
+      setBoard(boardCopy);
+      setXIsNext(!xIsNext);
+      return null;
+    }
     return null;
   };
 
@@ -80,7 +120,6 @@ const Game = () => {
   const resetGameType = () => {
     dispatch({ type: 'SET_GAME_TYPE', payload: 0 });
   };
-
   return (
     <div
       className={style.main}
@@ -90,10 +129,10 @@ const Game = () => {
           <div
             className={style.sticks}
             style={{
-              boxShadow: `${i % 2 === 0 ? firstPlayer.color : secondPlayer.color} 0 0 5px 10px`,
+              boxShadow: `${i % 2 === 0 ? firstPlayer().color : secondPlayer().color} 0 0 5px 10px`,
               filter: `blur(${Math.floor(Math.random() * 30)}px)`,
               top: `${Math.floor(Math.random() * 100)}%`,
-              background: `${i % 2 === 0 ? firstPlayer.color : secondPlayer.color}`,
+              background: `${i % 2 === 0 ? firstPlayer().color : secondPlayer().color}`,
             }}
           />
         ))}
@@ -144,7 +183,7 @@ const Game = () => {
           <span
             className={style.winnerDescription}
           >
-            {`${winner === 'X' ? firstPlayer.name : secondPlayer.name} won the game`}
+            {`${winner[0] === 'X' ? firstPlayer().name : secondPlayer().name} won the game`}
           </span>
           <div className={style.buttonContainer}>
             <Link to="/">
@@ -170,7 +209,7 @@ const Game = () => {
       <span
         className={style.whoseTurn}
       >
-        {`${xIsNext ? firstPlayer.name : secondPlayer.name} your turn`}
+        {`${xIsNext ? firstPlayer().name : secondPlayer().name} your turn`}
       </span>
       <Board
         className={style.board}

@@ -29,6 +29,9 @@ const Menu = () => {
 
   useEffect(() => {
     changeGameType(0);
+    localStorage.removeItem('players');
+    localStorage.removeItem('board');
+    localStorage.removeItem('gameType');
   }, []);
   useEffect(() => {
     if (gameType === 2) {
