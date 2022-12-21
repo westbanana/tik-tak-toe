@@ -18,29 +18,20 @@ const Game = () => {
   const dispatch = useDispatch();
   const players = useSelector(state => state.players.players[0]);
   const gameType = useSelector(state => state.gameType.gameType);
-  const firstPlayer = () => {
-    if (players) {
-      return players[0];
-    }
-    return localStorage.getItem('players')[0];
-  };
-  const secondPlayer = () => {
-    if (players) {
-      return players[1];
-    }
-    return localStorage.getItem('players')[1];
-  };
+  const [firstPlayer, setFirstPlayer] = useState(players[0]);
+  const [secondPlayer, setSecondPlayer] = useState(players[1]);
+  console.log(setSecondPlayer, setFirstPlayer);
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
   const calculateWinner = (squares) => {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
     for (let i = 0; i < lines.length; i += 1) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
@@ -49,29 +40,9 @@ const Game = () => {
     }
     return null;
   };
-
-  useEffect(() => {
-    if (!localStorage.getItem('players')) {
-      localStorage.setItem('players', JSON.stringify(players));
-      localStorage.setItem('gameType', gameType);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (localStorage.getItem('board') && localStorage.getItem('players') && localStorage.getItem('gameType')) {
-      const boardCopy = JSON.parse(localStorage.getItem('board'));
-      setBoard(boardCopy);
-      dispatch({ type: 'SET_GAME_TYPE', payload: Number(localStorage.getItem('gameType')) });
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('board', JSON.stringify(board));
-  }, [turnCount]);
-
   const winner = calculateWinner(board);
-
   const handleClick = (index) => {
+    localStorage.setItem('board', JSON.stringify(board));
     if (gameType === 2 && xIsNext) {
       setTurnCount(turnCount + 1);
       const boardCopy = [...board];
@@ -94,6 +65,7 @@ const Game = () => {
   };
 
   useEffect(() => {
+    localStorage.setItem('board', JSON.stringify(board));
     if (gameType === 2 && xIsNext === false) {
       const boardCopy = [...board];
       for (let i = 0; i <= 9; i += 1) {
@@ -110,6 +82,11 @@ const Game = () => {
       }
     }
   }, [xIsNext]);
+  useEffect(() => {
+    localStorage.setItem('gameType', gameType);
+    localStorage.setItem('board', JSON.stringify(board));
+    localStorage.setItem('players', JSON.stringify(players));
+  }, []);
 
   const restartGame = () => {
     setBoard(Array(9).fill(null));
@@ -129,10 +106,10 @@ const Game = () => {
           <div
             className={style.sticks}
             style={{
-              boxShadow: `${i % 2 === 0 ? firstPlayer().color : secondPlayer().color} 0 0 5px 10px`,
+              boxShadow: `${i % 2 === 0 ? firstPlayer.color : secondPlayer.color} 0 0 5px 10px`,
               filter: `blur(${Math.floor(Math.random() * 30)}px)`,
               top: `${Math.floor(Math.random() * 100)}%`,
-              background: `${i % 2 === 0 ? firstPlayer().color : secondPlayer().color}`,
+              background: `${i % 2 === 0 ? firstPlayer.color : secondPlayer.color}`,
             }}
           />
         ))}
@@ -183,7 +160,7 @@ const Game = () => {
           <span
             className={style.winnerDescription}
           >
-            {`${winner[0] === 'X' ? firstPlayer().name : secondPlayer().name} won the game`}
+            {`${winner[0] === 'X' ? firstPlayer.name : secondPlayer.name} won the game`}
           </span>
           <div className={style.buttonContainer}>
             <Link to="/">
@@ -209,7 +186,7 @@ const Game = () => {
       <span
         className={style.whoseTurn}
       >
-        {`${xIsNext ? firstPlayer().name : secondPlayer().name} your turn`}
+        {`${xIsNext ? firstPlayer.name : secondPlayer.name} your turn`}
       </span>
       <Board
         className={style.board}

@@ -29,15 +29,17 @@ const Menu = () => {
 
   useEffect(() => {
     changeGameType(0);
-    localStorage.removeItem('players');
-    localStorage.removeItem('board');
-    localStorage.removeItem('gameType');
   }, []);
   useEffect(() => {
     if (gameType === 2) {
       setSecondPlayer({ ...secondPlayer, name: 'BOT' });
     }
   }, [gameType]);
+  // useEffect(() => {
+  //   localStorage.removeItem('gameType');
+  //   localStorage.removeItem('board');
+  //   localStorage.removeItem('players');
+  // }, []);
   return (
     <div className={style.main}>
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
